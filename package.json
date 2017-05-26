@@ -1,0 +1,15 @@
+{
+  "name": "audio-waveform",
+  "version": "1.0.0",
+  "description": "HTML5 audio player with a waveform",
+  "main": "index.js",
+  "scripts": {
+    "start": "node .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Suresh Patidar",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.15.3"
+  }
+}

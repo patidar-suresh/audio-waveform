@@ -1,0 +1,19 @@
+#audioPlayer {
+    width:50%;
+    height:70px;
+    background: #012d3d;
+    margin: 50px auto;
+}
+
+#audioPlayer >div > audio {
+    width:100%;
+    float:left;
+    background: #012d3d;
+}
+
+#audioPlayer canvas {
+    width:100%;
+    height:50px;
+    float:left;
+    background: #012d3d;
+}
