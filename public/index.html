@@ -1,14 +1,20 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <link type="text/css" href="styles.css" rel="stylesheet">
 </head>
+
 <body>
     <div id="audioPlayer">
+        <canvas id="analyzer"></canvas>
         <div id="player"></div>
-        <canvas id="waveform"></canvas>
+        <div id="waveformContainer">
+            <div id="seekPosition"></div>            
+        </div>
     </div>
-    
-<script src="scripts.js"></script>
+
+    <script src="scripts.js"></script>
 </body>
+
 </html>

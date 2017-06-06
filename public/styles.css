@@ -1,8 +1,12 @@
 #audioPlayer {
-    width:50%;
-    height:70px;
+    width:750px;
     background: #012d3d;
     margin: 50px auto;
+}
+
+#waveformContainer {
+    width:100%;
+    position: relative;
 }
 
 #audioPlayer >div > audio {
@@ -11,9 +15,19 @@
     background: #012d3d;
 }
 
+#seekPosition {
+    position:absolute;
+    display: none;
+    text-align: center;
+    vertical-align: middle;
+    left: 0px;
+    border-left:solid 2px lightcoral;
+}
+
 #audioPlayer canvas {
     width:100%;
-    height:50px;
+    height:100px;
     float:left;
     background: #012d3d;
+    border-bottom: 1px solid white;
 }
