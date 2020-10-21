@@ -6,11 +6,23 @@
 </head>
 
 <body>
+    <canvas id="analyzer"></canvas>
+
     <div id="audioPlayer">
-        <canvas id="analyzer"></canvas>
         <div id="player"></div>
-        <div id="waveformContainer">
-            <div id="seekPosition"></div>            
+    </div>
+
+    <div id="overlay">
+        <div>
+            <label for="myRange" class='label no-padding'>VU Density</label>
+            <input type="range" min="5" max="11" value="8" class="slider" id="VUSlider">
+        </div>
+        <div>
+            <label for="songSelector" class='label'>Select Song</label>
+            <select id="songSelector" class="select">
+                <option value='0'>Don't You Worry Child</option>
+                <option value='1'>Force - Alan Walker</option>
+            </select>
         </div>
     </div>
 

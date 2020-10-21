@@ -3,9 +3,16 @@ const requestAnimationFrame = window.requestAnimationFrame || window.mozRequestA
     window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 const cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame;
 
-const fileName = "./audio/sample.mp3";
+const AUTOPLAY = true;
 
-const canvasWidth = 750, canvasHeight = 100;
+const fileNames = [
+    './audio/dont_worry.mp3',
+    './audio/force.mp3'
+];
+
+let fileName = fileNames[0];
+
+const canvasWidth = window.innerWidth, canvasHeight = window.innerHeight - 54;
 
 let seekPositionBar = document.getElementById("seekPosition");
 
@@ -19,12 +26,26 @@ let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 let analyser, canvas, canvasCtx, animationRequestID, audioPositionTimer;
 
+let playing = false;
+window.addEventListener("keypress", (e) => {
+    if (e.code === 'Space') {
+        if (playing) {
+            audio.pause();
+            playing = false;
+        } else {
+            audio.play();
+            playing = true;
+        }
+    }
+})
+
 window.addEventListener("load", () => {
     //Append audio object to the player div so that it is visible on page.
     document.getElementById("player").appendChild(audio);
 
     //Create audio analyser.    
     analyser = audioCtx.createAnalyser()
+    analyser.fftSize = 512;
 
     //Create canvas context
     canvas = document.getElementById("analyzer");
@@ -39,6 +60,13 @@ window.addEventListener("load", () => {
 
 }, false);
 
+document.getElementById('VUSlider').oninput = (e) => {
+    analyser.fftSize = Math.pow(2, e.target.value);
+}
+
+document.getElementById('songSelector').onchange = (e) => {
+    loadAudio(fileNames[parseInt(e.target.value)]);
+}
 
 //Attach callback for different audio events.
 audio.onplay = function () {
@@ -58,7 +86,6 @@ audio.onended = () => {
 
 audio.ontimeupdate = () => {
     let percentage = audio.currentTime / audio.duration * 100;
-    seekPositionBar.style.left = percentage + '%';
 }
 
 
@@ -72,15 +99,15 @@ function drawAnalyzer() {
     analyser.getByteFrequencyData(fbc_array);
 
     //Create Canvas with background color
-    canvasCtx.fillStyle = '#012d3d';
+    canvasCtx.fillStyle = '#2d2d2d';
     canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
 
     //Draw bars of the waveform
     let width = (canvas.width / fbc_array.length) * 2;
     let x = 0;
     for (let i = 0; i < fbc_array.length; i++) {
-        let height = -(fbc_array[i] / 2);
-        canvasCtx.fillStyle = '#05c8f5';
+        let height = -(fbc_array[i] / 4);
+        canvasCtx.fillStyle = '#FFFFFF';
         canvasCtx.fillRect(x, canvas.height, width, height);
         x += width + 1;
         //break as no need to draw bars beyond the canvas width
@@ -105,8 +132,10 @@ function loadAudio(url) {
                 //Decode audio data (arraybuffer) and display waveform
                 audioCtx.decodeAudioData(req.response,
                     function (buffer) {
-                        console.log('Channels:' + buffer.numberOfChannels);
-                        displayBuffer(buffer);
+                        if (AUTOPLAY) {
+                            audio.play();
+                            playing = true;
+                        }
                     }, () => { console.error('error in decoding'); });
             }
             else
@@ -117,57 +146,6 @@ function loadAudio(url) {
 }
 
 
-
-//Display channel wise waveform from the audio buffer
-function displayBuffer(buff /* is an AudioBuffer */) {
-
-    let container = document.getElementById("waveformContainer");
-    seekPositionBar.style.height = (buff.numberOfChannels * 100) + 'px';
-    seekPositionBar.style.bottom = -(135 + buff.numberOfChannels * 100) + 'px';
-    seekPositionBar.style.display = "block";
-    for (let channel = 0; channel < buff.numberOfChannels; channel++) {
-        let canvas = document.createElement('canvas');
-        canvas.id = "waveform" + channel;
-        canvas.width = canvasWidth;
-        canvas.height = canvasHeight;
-        container.appendChild(canvas);
-
-        let channelData = buff.getChannelData(channel);
-        createChannelWaveform(canvas, channelData);
-    }
-}
-
-// Draw channel waveform on Canvas
-function createChannelWaveform(canvas, channelData) {
-    var drawLines = 1000;
-
-    let canvasWidth = canvas.width, canvasHeight = canvas.height;
-    let context = canvas.getContext('2d');
-
-    var lineOpacity = canvasWidth / channelData.length;
-    context.save();
-    context.fillStyle = '#080808';
-    context.fillRect(0, 0, canvasWidth, canvasHeight);
-    context.strokeStyle = '#46a0ba';
-    context.globalCompositeOperation = 'lighter';
-    context.translate(0, canvasHeight / 2);
-    //context.globalAlpha = 0.6 ; // lineOpacity ;
-    context.lineWidth = 1;
-    var totallength = channelData.length;
-    var eachBlock = Math.floor(totallength / drawLines);
-    var lineGap = (canvasWidth / drawLines);
-
-    context.beginPath();
-    for (var i = 0; i <= drawLines; i++) {
-        var audioBuffKey = Math.floor(eachBlock * i);
-        var x = i * lineGap;
-        var y = channelData[audioBuffKey] * canvasHeight / 2;
-        context.moveTo(x, y);
-        context.lineTo(x, (y * -1));
-    }
-    context.stroke();
-    context.restore();
-}
 
 //Call method to load audio data
 loadAudio(fileName);
