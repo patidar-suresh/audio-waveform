@@ -12,13 +12,12 @@ let VU_BAR_GAP = 0;
 let VU_TYPES = [
     {
         id: 0,
-        name: 'Standard',
+        name: 'Standard RGB',
         fn: (x, width, peakArray) => {
-            canvasCtx.fillStyle = `#f1f3f4`;
-
             for (let i = 0; i < peakArray.length; i++) {
+                canvasCtx.fillStyle = `hsla(${180 - (peakArray[i] / 1.5)}, 100%, 50%, 0.8)`;
                 let height = -(peakArray[i] / 8) * vuModifier;
-
+    
                 canvasCtx.fillRect(x, canvas.height, width - VU_BAR_GAP, height);
                 x += width + VU_BAR_GAP;
                 if (x > canvas.width)
@@ -28,6 +27,22 @@ let VU_TYPES = [
     },
     {
         id: 1,
+        name: 'Standard',
+        fn: (x, width, peakArray) => {
+            canvasCtx.fillStyle = `#f1f3f4`;
+            
+            for (let i = 0; i < peakArray.length; i++) {
+                let height = -(peakArray[i] / 8) * vuModifier;
+                
+                canvasCtx.fillRect(x, canvas.height, width - VU_BAR_GAP, height);
+                x += width + VU_BAR_GAP;
+                if (x > canvas.width)
+                    break;
+            }
+        }
+    },
+    {
+        id: 2,
         name: 'Standard + Full Greyscale',
         fn: (x, width, peakArray) => {
             for (let i = 0; i < peakArray.length; i++) {
@@ -46,7 +61,7 @@ let VU_TYPES = [
         }
     },
     {
-        id: 2,
+        id: 3,
         name: 'Full Greyscale',
         fn: (x, width, peakArray) => {
             for (let i = 0; i < peakArray.length; i++) {
@@ -60,28 +75,13 @@ let VU_TYPES = [
         }
     },
     {
-        id: 3,
+        id: 4,
         name: 'Full RGB',
         fn: (x, width, peakArray) => {
             for (let i = 0; i < peakArray.length; i++) {
                 canvasCtx.fillStyle = `hsla(${180 - (peakArray[i] / 1.5)}, 100%, 50%, 0.8)`;
 
                 canvasCtx.fillRect(x, canvas.height, width - VU_BAR_GAP, -canvas.height);
-                x += width + VU_BAR_GAP;
-                if (x > canvas.width)
-                    break;
-            }
-        }
-    },
-    {
-        id: 4,
-        name: 'Standard RGB',
-        fn: (x, width, peakArray) => {
-            for (let i = 0; i < peakArray.length; i++) {
-                canvasCtx.fillStyle = `hsla(${180 - (peakArray[i] / 1.5)}, 100%, 50%, 0.8)`;
-                let height = -(peakArray[i] / 8) * vuModifier;
-
-                canvasCtx.fillRect(x, canvas.height, width - VU_BAR_GAP, height);
                 x += width + VU_BAR_GAP;
                 if (x > canvas.width)
                     break;
