@@ -13,11 +13,11 @@ let VU_TYPES = [
     {
         id: 0,
         name: 'Standard',
-        fn: (x, width, fbc_array) => {
+        fn: (x, width, peakArray) => {
             canvasCtx.fillStyle = `#f1f3f4`;
 
-            for (let i = 0; i < fbc_array.length; i++) {
-                let height = -(fbc_array[i] / 8) * vuModifier;
+            for (let i = 0; i < peakArray.length; i++) {
+                let height = -(peakArray[i] / 8) * vuModifier;
 
                 canvasCtx.fillRect(x, canvas.height, width - VU_BAR_GAP, height);
                 x += width + VU_BAR_GAP;
@@ -29,11 +29,11 @@ let VU_TYPES = [
     {
         id: 1,
         name: 'Standard + Full Greyscale',
-        fn: (x, width, fbc_array) => {
-            for (let i = 0; i < fbc_array.length; i++) {
-                let height = -(fbc_array[i] / 8) * vuModifier;
+        fn: (x, width, peakArray) => {
+            for (let i = 0; i < peakArray.length; i++) {
+                let height = -(peakArray[i] / 8) * vuModifier;
 
-                canvasCtx.fillStyle = `rgba(255, 255, 255, ${fbc_array[i] / 200})`;
+                canvasCtx.fillStyle = `rgba(255, 255, 255, ${peakArray[i] / 200})`;
                 canvasCtx.fillRect(x, canvas.height, width - VU_BAR_GAP, -canvas.height);
 
                 canvasCtx.fillStyle = `#f1f3f4`;
@@ -48,9 +48,9 @@ let VU_TYPES = [
     {
         id: 2,
         name: 'Full Greyscale',
-        fn: (x, width, fbc_array) => {
-            for (let i = 0; i < fbc_array.length; i++) {
-                canvasCtx.fillStyle = `rgba(255, 255, 255, ${fbc_array[i] / 200})`;
+        fn: (x, width, peakArray) => {
+            for (let i = 0; i < peakArray.length; i++) {
+                canvasCtx.fillStyle = `rgba(255, 255, 255, ${peakArray[i] / 200})`;
 
                 canvasCtx.fillRect(x, canvas.height, width - VU_BAR_GAP, -canvas.height);
                 x += width + VU_BAR_GAP;
@@ -62,9 +62,9 @@ let VU_TYPES = [
     {
         id: 3,
         name: 'Full RGB',
-        fn: (x, width, fbc_array) => {
-            for (let i = 0; i < fbc_array.length; i++) {
-                canvasCtx.fillStyle = `hsla(${180 - (fbc_array[i] / 1.5)}, 100%, 50%, 0.8)`;
+        fn: (x, width, peakArray) => {
+            for (let i = 0; i < peakArray.length; i++) {
+                canvasCtx.fillStyle = `hsla(${180 - (peakArray[i] / 1.5)}, 100%, 50%, 0.8)`;
 
                 canvasCtx.fillRect(x, canvas.height, width - VU_BAR_GAP, -canvas.height);
                 x += width + VU_BAR_GAP;
@@ -76,10 +76,10 @@ let VU_TYPES = [
     {
         id: 4,
         name: 'Standard RGB',
-        fn: (x, width, fbc_array) => {
-            for (let i = 0; i < fbc_array.length; i++) {
-                canvasCtx.fillStyle = `hsla(${180 - (fbc_array[i] / 1.5)}, 100%, 50%, 0.8)`;
-                let height = -(fbc_array[i] / 8) * vuModifier;
+        fn: (x, width, peakArray) => {
+            for (let i = 0; i < peakArray.length; i++) {
+                canvasCtx.fillStyle = `hsla(${180 - (peakArray[i] / 1.5)}, 100%, 50%, 0.8)`;
+                let height = -(peakArray[i] / 8) * vuModifier;
 
                 canvasCtx.fillRect(x, canvas.height, width - VU_BAR_GAP, height);
                 x += width + VU_BAR_GAP;
@@ -91,14 +91,14 @@ let VU_TYPES = [
     {
         id: 5,
         name: 'Inverted RGB + Full Greyscale',
-        fn: (x, width, fbc_array) => {
-            for (let i = 0; i < fbc_array.length; i++) {
-                let height = -(fbc_array[i] / 8) * vuModifier;
+        fn: (x, width, peakArray) => {
+            for (let i = 0; i < peakArray.length; i++) {
+                let height = -(peakArray[i] / 8) * vuModifier;
 
-                canvasCtx.fillStyle = `rgba(255, 255, 255, ${fbc_array[i] / 200})`;
+                canvasCtx.fillStyle = `rgba(255, 255, 255, ${peakArray[i] / 200})`;
                 canvasCtx.fillRect(x, canvas.height, width - VU_BAR_GAP, -canvas.height);
 
-                canvasCtx.fillStyle = `hsla(${(fbc_array[i] / 1.5)}, 100%, 50%, 0.8)`;
+                canvasCtx.fillStyle = `hsla(${(peakArray[i] / 1.5)}, 100%, 50%, 0.8)`;
                 canvasCtx.fillRect(x, canvas.height, width - VU_BAR_GAP, height);
 
                 x += width + VU_BAR_GAP;
@@ -270,18 +270,18 @@ function drawAnalyzer() {
     animationRequestID = requestAnimationFrame(() => drawAnalyzer());
 
     //Get frequency data from analyzer
-    let fbc_array = new Uint8Array(analyser.frequencyBinCount)
-    analyser.getByteFrequencyData(fbc_array);
+    let peakArray = new Uint8Array(analyser.frequencyBinCount)
+    analyser.getByteFrequencyData(peakArray);
 
     //Create Canvas with background color
     canvasCtx.fillStyle = '#2d2d2d';
     canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
 
     //Draw bars of the waveform
-    let width = (canvas.width / fbc_array.length) * 2;
+    let width = (canvas.width / peakArray.length) * 2;
     let x = 0;
 
-    VU_TYPES[VU_TYPE].fn(x, width, fbc_array);
+    VU_TYPES[VU_TYPE].fn(x, width, peakArray);
 }
 
 //Load audio using AJAX

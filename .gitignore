@@ -14,3 +14,4 @@ build
 .env
 .vscode
 npm-debug.log*
+debug.log

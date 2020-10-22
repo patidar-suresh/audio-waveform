@@ -25,6 +25,6 @@ module.exports = {
         port: 8080
     },
     optimization: {
-        minimize: false
+        minimize: true
     }
 }
