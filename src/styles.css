@@ -36,7 +36,7 @@ input:focus {
     background-color:rgba(0,0,0,0.5);
     color:white;
     position:fixed;
-    top:0;
+    bottom:0;
     right:0;
     z-index: 1000;
     font-size:14px;
@@ -62,7 +62,7 @@ button {
 #openOverlay {
     background-color:rgba(0,0,0,0.5);
     position:fixed;
-    top:0;
+    bottom:0;
     right:0;
     z-index: 1000;
     font-size:14px;
@@ -79,7 +79,7 @@ button {
 }
 
 #openOverlay.visible {
-    opacity:1;
+    opacity:0.2;
     pointer-events:all;
 }
 
@@ -106,11 +106,30 @@ button {
     width:100%;
     height:54px;
     background: #f1f3f4;
+    opacity:0;
+    transition:all 0.1s;
+    position:fixed;
+    top:0;
+    left:0;
+}
+
+#audioPlayer:after {
+    content: ' ';
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100px;
+    opacity:0;
 }
 
 #waveformContainer {
     width:100%;
     position: relative;
+}
+
+#audioPlayer.visible {
+    opacity:1;
 }
 
 #audioPlayer > div > audio {
