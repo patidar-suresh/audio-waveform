@@ -1,4 +1,4 @@
-import './scss/main.scss';
+import './scss/main.scss'
 
 //Define AnimationFrame variables
 const requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
@@ -8,7 +8,7 @@ const cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnim
 const AUTOPLAY = false;
 
 let VU_TYPE = 0;
-let VU_BAR_GAP = true;
+let VU_BAR_GAP = 0;
 let VU_TYPES = [
     {
         id: 0,
@@ -19,8 +19,8 @@ let VU_TYPES = [
             for (let i = 0; i < fbc_array.length; i++) {
                 let height = -(fbc_array[i] / 8) * vuModifier;
 
-                canvasCtx.fillRect(x, canvas.height, width, height);
-                x += width;
+                canvasCtx.fillRect(x, canvas.height, width - VU_BAR_GAP, height);
+                x += width + VU_BAR_GAP;
                 if (x > canvas.width)
                     break;
             }
@@ -34,7 +34,7 @@ let VU_TYPES = [
                 let height = -(fbc_array[i] / 8) * vuModifier;
 
                 canvasCtx.fillStyle = `rgba(255, 255, 255, ${fbc_array[i] / 200})`;
-                canvasCtx.fillRect(x, canvas.height, width, -canvas.height);
+                canvasCtx.fillRect(x, canvas.height, width - VU_BAR_GAP, -canvas.height);
 
                 canvasCtx.fillStyle = `#f1f3f4`;
                 canvasCtx.fillRect(x, canvas.height, width - VU_BAR_GAP, height);
@@ -52,8 +52,8 @@ let VU_TYPES = [
             for (let i = 0; i < fbc_array.length; i++) {
                 canvasCtx.fillStyle = `rgba(255, 255, 255, ${fbc_array[i] / 200})`;
 
-                canvasCtx.fillRect(x, canvas.height, width, -canvas.height);
-                x += width;
+                canvasCtx.fillRect(x, canvas.height, width - VU_BAR_GAP, -canvas.height);
+                x += width + VU_BAR_GAP;
                 if (x > canvas.width)
                     break;
             }
@@ -62,12 +62,12 @@ let VU_TYPES = [
     {
         id: 3,
         name: 'Full RGB',
-        fn: (x, width) => {
+        fn: (x, width, fbc_array) => {
             for (let i = 0; i < fbc_array.length; i++) {
                 canvasCtx.fillStyle = `hsla(${180 - (fbc_array[i] / 1.5)}, 100%, 50%, 0.8)`;
 
-                canvasCtx.fillRect(x, canvas.height, width, -canvas.height);
-                x += width;
+                canvasCtx.fillRect(x, canvas.height, width - VU_BAR_GAP, -canvas.height);
+                x += width + VU_BAR_GAP;
                 if (x > canvas.width)
                     break;
             }
@@ -81,8 +81,8 @@ let VU_TYPES = [
                 canvasCtx.fillStyle = `hsla(${180 - (fbc_array[i] / 1.5)}, 100%, 50%, 0.8)`;
                 let height = -(fbc_array[i] / 8) * vuModifier;
 
-                canvasCtx.fillRect(x, canvas.height, width, height);
-                x += width;
+                canvasCtx.fillRect(x, canvas.height, width - VU_BAR_GAP, height);
+                x += width + VU_BAR_GAP;
                 if (x > canvas.width)
                     break;
             }
@@ -96,12 +96,12 @@ let VU_TYPES = [
                 let height = -(fbc_array[i] / 8) * vuModifier;
 
                 canvasCtx.fillStyle = `rgba(255, 255, 255, ${fbc_array[i] / 200})`;
-                canvasCtx.fillRect(x, canvas.height, width, -canvas.height);
+                canvasCtx.fillRect(x, canvas.height, width - VU_BAR_GAP, -canvas.height);
 
                 canvasCtx.fillStyle = `hsla(${(fbc_array[i] / 1.5)}, 100%, 50%, 0.8)`;
-                canvasCtx.fillRect(x, canvas.height, width, height);
+                canvasCtx.fillRect(x, canvas.height, width - VU_BAR_GAP, height);
 
-                x += width;
+                x += width + VU_BAR_GAP;
                 if (x > canvas.width)
                     break;
             }
