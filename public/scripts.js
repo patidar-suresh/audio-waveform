@@ -3,23 +3,25 @@ const requestAnimationFrame = window.requestAnimationFrame || window.mozRequestA
     window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 const cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame;
 
-const AUTOPLAY = true;
+const AUTOPLAY = false;
 
 const fileNames = [
+    './audio/force.mp3',
     './audio/dont_worry.mp3',
-    './audio/force.mp3'
+    './audio/mama.mp3',
 ];
 
 let fileName = fileNames[0];
 
-const canvasWidth = window.innerWidth, canvasHeight = window.innerHeight - 54;
+let canvasWidth = window.innerWidth,
+    canvasHeight = window.innerHeight - 54;
 
 let seekPositionBar = document.getElementById("seekPosition");
 
 //Create the instance of Audio element and set its properties
 const audio = new Audio();
 audio.controls = true;
-audio.loop = false;
+audio.loop = true;
 audio.autoplay = false;
 
 let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -39,19 +41,46 @@ window.addEventListener("keypress", (e) => {
     }
 })
 
+let menuButton = document.getElementById('openOverlay');
+let closeButton = document.getElementById('closeOverlay');
+let overlay = document.getElementById('overlay');
+
+menuButton.onmouseenter = () => openMenu();
+overlay.onmouseleave = () => closeMenu();
+
+const toggleMenu = () => {
+    menuButton.classList.toggle('visible');
+    overlay.classList.toggle('visible');
+}
+const openMenu = () => {
+    menuButton.classList.remove('visible');
+    overlay.classList.add('visible');
+}
+const closeMenu = () => {
+    menuButton.classList.add('visible');
+    overlay.classList.remove('visible');
+}
+
 window.addEventListener("load", () => {
     //Append audio object to the player div so that it is visible on page.
     document.getElementById("player").appendChild(audio);
 
     //Create audio analyser.    
     analyser = audioCtx.createAnalyser()
-    analyser.fftSize = 512;
+    analyser.fftSize = Math.pow(2, 10);
 
     //Create canvas context
     canvas = document.getElementById("analyzer");
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
     canvasCtx = canvas.getContext('2d');
+
+    window.onresize = () => {
+        canvasWidth = window.innerWidth;
+        canvasHeight = window.innerHeight - 54;
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+    }
 
     //Connect source to analyzer and then to audio context destination
     let source = audioCtx.createMediaElementSource(audio);
@@ -62,6 +91,12 @@ window.addEventListener("load", () => {
 
 document.getElementById('VUSlider').oninput = (e) => {
     analyser.fftSize = Math.pow(2, e.target.value);
+}
+
+let vuHeightMultiplier = 3;
+
+document.getElementById('VUSlider2').oninput = (e) => {
+    vuHeightMultiplier = e.target.value;
 }
 
 document.getElementById('songSelector').onchange = (e) => {
@@ -85,7 +120,7 @@ audio.onended = () => {
 }
 
 audio.ontimeupdate = () => {
-    let percentage = audio.currentTime / audio.duration * 100;
+    let percentage = audio.currentTime / audio.duration;
 }
 
 
@@ -106,10 +141,10 @@ function drawAnalyzer() {
     let width = (canvas.width / fbc_array.length) * 2;
     let x = 0;
     for (let i = 0; i < fbc_array.length; i++) {
-        let height = -(fbc_array[i] / 4);
-        canvasCtx.fillStyle = '#FFFFFF';
+        let height = -(fbc_array[i] / 8) * vuHeightMultiplier;
+        canvasCtx.fillStyle = '#f1f3f4';
         canvasCtx.fillRect(x, canvas.height, width, height);
-        x += width + 1;
+        x += width;
         //break as no need to draw bars beyond the canvas width
         if (x > canvas.width)
             break;
